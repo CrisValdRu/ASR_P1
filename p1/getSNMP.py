@@ -18,11 +18,12 @@ def consultaSNMP(comunidad,host,oid):
             resultado= varB.split()[2]
     return resultado
 
-def consultaStrSNMP(comunidad, host, oid):
+def consultaStrSNMP(comunidad, host, oid, port):
+    global resultado1
     errorIndication, errorStatus, errorIndex, varBinds = next(
         getCmd(SnmpEngine(),
                CommunityData(comunidad),
-               UdpTransportTarget((host, 161)),
+               UdpTransportTarget((host, port)),
                ContextData(),
                ObjectType(ObjectIdentity(oid))))
 
@@ -31,5 +32,9 @@ def consultaStrSNMP(comunidad, host, oid):
     elif errorStatus:
         print('%s at %s' % (errorStatus.prettyPrint(), errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
     else:
-        resultado = varBinds
+        for varBind in varBinds:
+            varB=(' = '.join([x.prettyPrint() for x in varBind]))
+            #print(varBinds)
+            resultado1=varB.split("= ")
+        resultado = int(resultado1[1])
     return resultado
