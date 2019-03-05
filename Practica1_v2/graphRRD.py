@@ -13,6 +13,22 @@ def graficarRRD(nombre):
                 "DEF:inoctets=rrd/"+nombre+".rrd:inoctets:AVERAGE",
                 "AREA:inoctets#00FF00:"+nombre)
 
+def graficarObjectsRRD(nombre):
+        ret = rrdtool.graph( "png/"+nombre+".png",
+                "--start",'1551762120',
+                "--end","N",
+                "--vertical-label=Bytes/s",
+                "DEF:inTrafic=rrd/"+nombre+".rrd:inTrafic:AVERAGE",
+                "DEF:outTrafic=rrd/"+nombre+".rrd:outTrafic:AVERAGE",
+                "DEF:inPktsError=rrd/"+nombre+".rrd:inPktsError:AVERAGE",
+                "DEF:outPktsError=rrd/"+nombre+".rrd:outPktsError:AVERAGE",
+                "DEF:inISMPMsg=rrd/"+nombre+".rrd:inISMPMsg:AVERAGE",
+                "LINE1:inTrafic#000022:inTrafic",
+                "LINE1:outTrafic#005500:outTrafic",
+                "LINE1:inPktsError#FF0022:inPktsError",
+                "LINE1:outPktsError#AA0022:outPktsError",
+                "LINE1:inISMPMsg#00FF00:inISMPMsg")
+
 def graficar(nombre):
         con = 0
         ret = rrdtool.graph( "png/"+nombre+".png",
