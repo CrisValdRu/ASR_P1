@@ -18,9 +18,9 @@ def actualizarRRD (archivo, comunidad, host, oid):
 
 def actualizarObjectsRRD (archivo, comunidad, host):
     
-    oid="1.3.6.1.2.1.2.2.1.10.3"
+    oid="1.3.6.1.4.1.2021.4.6.0"
     total_input_traffic = int(consultaSNMP(comunidad,host,oid))
-    oid="1.3.6.1.2.1.2.2.1.16.3"
+    oid="1.3.6.1.2.1.25.3.3.1.2.196608"
     total_output_traffic = int(consultaSNMP(comunidad,host,oid))
     
     valor = "N:" + str(total_input_traffic)+ ':' + str(total_output_traffic)

@@ -5,10 +5,10 @@ def createRRDTOOL(nombre,start,step):
     ret = rrdtool.create("rrd/"+nombre,
                         "--start",start,
                         "--step",step,
-                        "DS:inoctets:COUNTER:600:U:U",
-                        "DS:outoctets:COUNTER:600:U:U",
-                        "RRA:AVERAGE:0.5:1:700",
-                        "RRA:AVERAGE:0.5:1:700")
+                        "DS:inoctets:GAUGE:600:U:U",
+                        "DS:outoctets:GAUGE:600:U:U",
+                        "RRA:AVERAGE:0.5:1:100",
+                        "RRA:AVERAGE:0.5:1:100")
 
     if ret:
         print (rrdtool.error())

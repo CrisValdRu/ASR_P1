@@ -58,13 +58,18 @@ while repetir:
                 else:
                     con = 600
     elif (opcion==5):
-        print('\nIngresa el nombre del archivo rrd: ')
-        archivo=input()
-        print('Ingresa una comunidad: ')
-        comunidad=input()
-        print('Ingresa un host: ')
-        host=input()
 
+        #print('\nIngresa el nombre del archivo rrd: ')
+        #archivo=input()
+        #print('Ingresa una comunidad: ')
+        #comunidad=input()
+        #print('Ingresa un host: ')
+        #host=input()
+
+        archivo="p2"
+        comunidad="grupo_4cm1"
+        host="localhost"
+        createRRDTOOL(archivo+".rrd",'N','10')
         #objectsCreateRRDTOOL(archivo+".rrd",'N','10')
 
         #print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
@@ -72,7 +77,7 @@ while repetir:
         con=0
         while (con < 600):
             actualizarObjectsRRD(archivo,comunidad,host)
-            if(con%5==0):
+            if(con%2==0):
                 graficarObjectsRRD(archivo)
             time.sleep(1)
             con+=1
