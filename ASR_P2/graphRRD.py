@@ -1,6 +1,7 @@
 import sys
 import rrdtool
 import time
+from mail import sendMailTo
 
 def graficarRRD(nombre):
         ret = rrdtool.graph( "png/"+nombre+".png",
@@ -14,7 +15,7 @@ def graficarObjectsRRD(nombre):
         ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
         tiempo_final = ultima_lectura
         tiempo_inicial = tiempo_final-600
-        ret = rrdtool.graph( "png/"+nombre+".png",
+        ret = rrdtool.graphv( "png/"+nombre+".png",
                 "--start",str(tiempo_inicial),
                 "--end",str(tiempo_final),
                 "--title=Uso de CPU",
@@ -47,18 +48,25 @@ def graficarObjectsRRD(nombre):
                 "GPRINT:CPUavg:%13.0lf%SAVG",
                 "GPRINT:CPUmax:%6.2lf %SMAX",
                 "GPRINT:CPUSTDEV:%6.2lf %SSTDEV",
+                "PRINT:CPUlast:%6.2lf %S",
 
                 "AREA:outTrafic#005500:Carga de cpu",
                 "AREA:umbral25#00FF00:Tráfico de carga mayor que 25",
                 "AREA:umbral50#FFBB00:Tráfico de carga mayor que 50",
                 "AREA:umbral75#FF0000:Tráfico de carga mayor que 75",
                 "HRULE:25#00FF00:Umbral 1 - 25%",
-                "HRULE:50#FFBB00:Umbral 2 - 50%",
-                "HRULE:75#FF0000:Umbral 3 - 75%"
-                #"LINE1:tendencia#FFBB00",
+                "HRULE:50#FFBB00:Umbral 26 - 50%",
+                "HRULE:75#FF0000:Umbral 51 - 75%",
+                "LINE2:tendencia#FFBB00"
                 #"LINE1:tendenciaMin#00FF00",
                 #"LINE1:tendenciaMax#FF0000",
                 )
+        print(ret['print[0]'])
+        ultimo_valor=float(ret['print[0]'])
+
+        if ultimo_valor>25:
+                print("Envio correo segun")
+                #sendMailTo("crisvaldru07@outlook.com","Uso del CPU")
 
 def graficar(nombre):
         con = 0

@@ -69,7 +69,7 @@ while repetir:
         archivo="p2"
         comunidad="grupo_4cm1"
         host="localhost"
-        createRRDTOOL(archivo+".rrd",'N','10')
+        #createRRDTOOL(archivo+".rrd",'N','10')
         #objectsCreateRRDTOOL(archivo+".rrd",'N','10')
 
         #print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
