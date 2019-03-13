@@ -10,7 +10,8 @@ def SendMail(ImgFileName):
     msg = MIMEMultipart()
     msg['Subject'] = 'Evidencia 3'
     msg['From'] = 'cefriasm@gmail.com'
-    msg['To'] = 'tanibet.escom@gmail.com'
+    msg['To'] = 'castilloreyesjuan@gmail.com'
+
     text = MIMEText("Grupo 4CM1 - Equipo 4")
     msg.attach(text)
     image = MIMEImage(img_data, name=os.path.basename(ImgFileName))
@@ -29,3 +30,5 @@ def SendMail(ImgFileName):
     s.login(sender, 'RedesSensuales')
     s.sendmail(msg['From'], msg['To'], msg.as_string())
     s.quit()
+
+SendMail('./png/examen2.png')
