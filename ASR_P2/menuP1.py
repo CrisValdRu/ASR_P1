@@ -1,8 +1,9 @@
 from createRRD import createRRDTOOL, objectsCreateRRDTOOL
-from graphRRD import graficar, graficarRRD, graficarObjectsRRD
+from graphRRD import graficar, graficarRRD, graficarObjectsRRD, graficarMinimosCuadrados
 from updateRRD import updateRRD, actualizarRRD, actualizarObjectsRRD
 import time
 import sys
+from mail import sendMailTo
 
 repetir = True
 while repetir:
@@ -11,8 +12,8 @@ while repetir:
         '1) Crear Archivo RRD\n'
         '2) Actualizar Archivo RRD\n'
         '3) Graficar\n'
-        '4) Actualizar y Graficar\n'
-        '5) Actualizar y Graficar 5 objetos MIB')
+        '4) Prediccion Minimos cuadrados\n'
+        '5) Graficar CPU Linea Base')
 
     opcion=int(input())
 
@@ -35,30 +36,23 @@ while repetir:
         archivo=input()
         graficar(archivo)
     elif (opcion==4):
-        print('\nIngresa el nombre del archivo rrd: ')
-        archivo=input()
-        print('Ingresa una comunidad: ')
-        comunidad=input()
-        print('Ingresa un host: ')
-        host=input()
-        print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
-        oid=input()
-        con=0
-        while (con < 600):
-            actualizarRRD(archivo,comunidad,host,oid)
-            if(con%5==0):
-                graficarRRD(archivo)
-            time.sleep(1)
-            con+=1
-            if(con == 599):
-                print("Desea seguir monitoreando? Y/N: ")
-                res=input()
-                if(res=='Y' or res=='y' or res=="Yes"):
-                    con = 0
-                else:
-                    con = 600
-    elif (opcion==5):
+        #print('\nIngresa el nombre del archivo rrd: ')
+        #archivo=input()
+        #print('Ingresa una comunidad: ')
+        #comunidad=input()
+        #print('Ingresa un host: ')
+        #host=input()
 
+        archivo="pred"
+        comunidad="grupo_4cm1"
+        host="localhost"
+
+        con=0
+        flag=0
+        canSend=False
+        graficarMinimosCuadrados(archivo)
+        
+    elif (opcion==5):
         #print('\nIngresa el nombre del archivo rrd: ')
         #archivo=input()
         #print('Ingresa una comunidad: ')
@@ -75,10 +69,37 @@ while repetir:
         #print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
         #oid=input()
         con=0
+        flag=0
+        canSend=False
+
         while (con < 600):
             actualizarObjectsRRD(archivo,comunidad,host)
             if(con%2==0):
-                graficarObjectsRRD(archivo)
+                ultimo_valor = float(graficarObjectsRRD(archivo))
+                if (flag==0):
+                    if (ultimo_valor>23):
+                            canSend=True
+                            flag=1
+                elif (flag==1):
+                        if (ultimo_valor>48):
+                                canSend=True
+                                flag=2
+                        elif (ultimo_valor<23):
+                                flag=0
+                elif (flag==2):
+                        if(ultimo_valor>73):
+                                canSend=True
+                                flag=3
+                        elif(ultimo_valor<48):
+                                flag=1
+                elif (flag==3):
+                        if(ultimo_valor<73):
+                                flag=2
+                
+                if(canSend):
+                        print("Va a sobrepasar el umbral")
+                        canSend=False
+                        sendMailTo("crisvaldru07@outlook.com","Uso del CPU va a sobrepasar el umbral")
             time.sleep(1)
             con+=1
             if(con == 599):

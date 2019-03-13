@@ -8,7 +8,7 @@ total_output_traffic = 0
 def actualizarRRD (archivo, comunidad, host, oid):
     total_input_traffic = int(consultaSNMP(comunidad,host,oid))
     valor = "N:" + str(total_input_traffic)
-    print (valor)
+    #print (valor)
     rrdtool.update("rrd/"+archivo+".rrd", valor)
     rrdtool.dump("rrd/"+archivo+".rrd","xml/"+archivo+".xml")
     #time.sleep(1)
@@ -24,7 +24,7 @@ def actualizarObjectsRRD (archivo, comunidad, host):
     total_output_traffic = int(consultaSNMP(comunidad,host,oid))
     
     valor = "N:" + str(total_input_traffic)+ ':' + str(total_output_traffic)
-    print (valor)
+    #print (valor)
     rrdtool.update("rrd/"+archivo+".rrd", valor)
     rrdtool.dump("rrd/"+archivo+".rrd","xml/"+archivo+".xml")
 

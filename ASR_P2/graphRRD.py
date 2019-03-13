@@ -1,7 +1,9 @@
 import sys
 import rrdtool
 import time
-from mail import sendMailTo
+
+
+
 
 def graficarRRD(nombre):
         ret = rrdtool.graph( "png/"+nombre+".png",
@@ -10,6 +12,47 @@ def graficarRRD(nombre):
                 "--vertical-label=Bytes/s",
                 "DEF:inoctets=rrd/"+nombre+".rrd:inoctets:AVERAGE",
                 "AREA:inoctets#00FF00:"+nombre)
+
+def graficarMinimosCuadrados (nombre):
+        ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
+        tiempo_final = ultima_lectura
+        tiempo_inicial = tiempo_final-600
+        ret = rrdtool.graphv( "png/"+nombre+".png",
+                "--start",str(tiempo_inicial),
+                "--end",str(tiempo_final+3000),
+                "--title=Uso de CPU",
+                "--color", 
+                "ARROW#009900",
+                '--vertical-label', "Uso de CPU (%)",
+                
+                '--lower-limit', '0',
+                '--upper-limit', '100',
+
+                "DEF:outTrafic=rrd/"+nombre+".rrd:outoctets:AVERAGE",
+
+                "VDEF:m=outTrafic,LSLSLOPE",
+                "VDEF:b=outTrafic,LSLINT",
+                "CDEF:tendencia=outTrafic,POP,m,COUNT,*,b,+",
+                "CDEF:limites=tendencia,0,-10,LIMIT",
+                "VDEF:limite1=limites,FIRST",
+                "VDEF:limite2=limites,LAST",
+
+                "VDEF:CPUlast=outTrafic,LAST",
+                "PRINT:CPUlast:%6.2lf %S",
+
+                "AREA:outTrafic#005500:Carga de cpu",
+                "HRULE:0#00FF00",
+                "AREA:tendencia#FFBB0077",
+                "LINE2:tendencia#FFBB00",
+                "LINE1:tendencia#FFBB00:dashes=10",
+                "AREA:limite1#FFFFFF",
+                "GPRINT:limite1:  Reach  0% @ %c :strftime",
+                "GPRINT:limite2:  \nReach -100% @ %c \\n:strftime"
+                
+                )
+        #print(ret['print[0]'])
+        ultimo_valor=float(ret['print[0]'])
+        return ultimo_valor
 
 def graficarObjectsRRD(nombre):
         ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
@@ -34,6 +77,7 @@ def graficarObjectsRRD(nombre):
                 "VDEF:m=outTrafic,LSLSLOPE",
                 "VDEF:b=outTrafic,LSLINT",
                 "CDEF:tendencia=outTrafic,POP,m,COUNT,*,b,+",
+                #"CDEF:tendenciaPred=tendencia,90,LT,0,tendencia,IF",
                 #"CDEF:tendenciaMin=outTrafic,POP,m,COUNT,*,b,+,3,-",
                 #"CDEF:tendenciaMax=outTrafic,POP,m,COUNT,*,b,+,3,+",
 
@@ -49,6 +93,7 @@ def graficarObjectsRRD(nombre):
                 "GPRINT:CPUmax:%6.2lf %SMAX",
                 "GPRINT:CPUSTDEV:%6.2lf %SSTDEV",
                 "PRINT:CPUlast:%6.2lf %S",
+                #"PRINT:tendenciaPred:%6.2lf %S",
 
                 "AREA:outTrafic#005500:Carga de cpu",
                 "AREA:umbral25#00FF00:Tráfico de carga mayor que 25",
@@ -61,12 +106,12 @@ def graficarObjectsRRD(nombre):
                 #"LINE1:tendenciaMin#00FF00",
                 #"LINE1:tendenciaMax#FF0000",
                 )
-        print(ret['print[0]'])
+        #print(ret['print[0]'])
         ultimo_valor=float(ret['print[0]'])
+        return ultimo_valor
 
-        if ultimo_valor>25:
-                print("Envio correo segun")
-                #sendMailTo("crisvaldru07@outlook.com","Uso del CPU")
+        
+
 
 def graficar(nombre):
         con = 0
