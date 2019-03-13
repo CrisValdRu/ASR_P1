@@ -17,7 +17,7 @@ def graficarMinimosCuadrados (nombre):
         ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
         tiempo_final = ultima_lectura
         tiempo_inicial = tiempo_final-600
-        ret = rrdtool.graphv( "png/"+nombre+".png",
+        ret = rrdtool.graphv( "png/"+nombre+"MinCua.png",
                 "--start",str(tiempo_inicial),
                 "--end",str(tiempo_final+3000),
                 "--title=Uso de CPU",
@@ -33,19 +33,23 @@ def graficarMinimosCuadrados (nombre):
                 "VDEF:m=outTrafic,LSLSLOPE",
                 "VDEF:b=outTrafic,LSLINT",
                 "CDEF:tendencia=outTrafic,POP,m,COUNT,*,b,+",
-                "CDEF:limites=tendencia,0,-10,LIMIT",
+                "CDEF:limites=tendencia,90,100,LIMIT",
                 "VDEF:limite1=limites,FIRST",
                 "VDEF:limite2=limites,LAST",
+
+                "VDEF:CPUmax=outTrafic,MAXIMUM",
 
                 "VDEF:CPUlast=outTrafic,LAST",
                 "PRINT:CPUlast:%6.2lf %S",
 
                 "AREA:outTrafic#005500:Carga de cpu",
-                "HRULE:0#00FF00",
+                "HRULE:CPUmax#00FF00",
                 "AREA:tendencia#FFBB0077",
                 "LINE2:tendencia#FFBB00",
                 "LINE1:tendencia#FFBB00:dashes=10",
                 "AREA:limite1#FFFFFF",
+                "AREA:outTrafic#005500:Carga de cpu",
+                "AREA:tendencia#FFBB0077",
                 "GPRINT:limite1:  Reach  0% @ %c :strftime",
                 "GPRINT:limite2:  \nReach -100% @ %c \\n:strftime"
                 
@@ -77,6 +81,8 @@ def graficarObjectsRRD(nombre):
                 "VDEF:m=outTrafic,LSLSLOPE",
                 "VDEF:b=outTrafic,LSLINT",
                 "CDEF:tendencia=outTrafic,POP,m,COUNT,*,b,+",
+
+
                 #"CDEF:tendenciaPred=tendencia,90,LT,0,tendencia,IF",
                 #"CDEF:tendenciaMin=outTrafic,POP,m,COUNT,*,b,+,3,-",
                 #"CDEF:tendenciaMax=outTrafic,POP,m,COUNT,*,b,+,3,+",
@@ -96,18 +102,17 @@ def graficarObjectsRRD(nombre):
                 #"PRINT:tendenciaPred:%6.2lf %S",
 
                 "AREA:outTrafic#005500:Carga de cpu",
-                "AREA:umbral25#00FF00:Tráfico de carga mayor que 25",
-                "AREA:umbral50#FFBB00:Tráfico de carga mayor que 50",
-                "AREA:umbral75#FF0000:Tráfico de carga mayor que 75",
-                "HRULE:25#00FF00:Umbral 1 - 25%",
-                "HRULE:50#FFBB00:Umbral 26 - 50%",
-                "HRULE:75#FF0000:Umbral 51 - 75%",
-                "LINE2:tendencia#FFBB00"
+                "AREA:umbral25#00FF00:Tráfico de carga mayor que min",
+                "AREA:umbral50#FFBB00:Tráfico de carga mayor que avg",
+                "AREA:umbral75#FF0000:Tráfico de carga mayor que max",
+                "HRULE:63#00FF00:Umbral ready",
+                "HRULE:78#FFBB00:Umbral set",
+                "HRULE:85#FF0000:Umbral go"
                 #"LINE1:tendenciaMin#00FF00",
                 #"LINE1:tendenciaMax#FF0000",
                 )
         #print(ret['print[0]'])
-        ultimo_valor=float(ret['print[0]'])
+        ultimo_valor=[float(ret['print[0]']),float(63),float(78),float(85)]
         return ultimo_valor
 
         

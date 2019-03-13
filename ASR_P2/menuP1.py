@@ -3,7 +3,7 @@ from graphRRD import graficar, graficarRRD, graficarObjectsRRD, graficarMinimosC
 from updateRRD import updateRRD, actualizarRRD, actualizarObjectsRRD
 import time
 import sys
-from mail import sendMailTo
+from mail import SendMail
 
 repetir = True
 while repetir:
@@ -43,9 +43,9 @@ while repetir:
         #print('Ingresa un host: ')
         #host=input()
 
-        archivo="pred"
-        comunidad="grupo_4cm1"
-        host="localhost"
+        archivo="examen2"
+        comunidad="variation/linux-full-walk"
+        host="10.100.71.200"
 
         con=0
         flag=0
@@ -53,53 +53,54 @@ while repetir:
         graficarMinimosCuadrados(archivo)
         
     elif (opcion==5):
-        #print('\nIngresa el nombre del archivo rrd: ')
-        #archivo=input()
+        print('\nIngresa el nombre del archivo rrd: ')
+        archivo=input()
         #print('Ingresa una comunidad: ')
         #comunidad=input()
         #print('Ingresa un host: ')
         #host=input()
 
-        archivo="p2"
+        archivo="examen2"
         comunidad="grupo_4cm1"
         host="localhost"
-        #createRRDTOOL(archivo+".rrd",'N','10')
+        createRRDTOOL(archivo+".rrd",'N','10')
         #objectsCreateRRDTOOL(archivo+".rrd",'N','10')
 
-        #print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
-        #oid=input()
+        print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
+        oid=input()
         con=0
         flag=0
         canSend=False
 
         while (con < 600):
-            actualizarObjectsRRD(archivo,comunidad,host)
+            actualizarObjectsRRD(archivo,comunidad,host,oid)
             if(con%2==0):
-                ultimo_valor = float(graficarObjectsRRD(archivo))
+                ultimo_valor = graficarObjectsRRD(archivo)
                 if (flag==0):
-                    if (ultimo_valor>23):
-                            canSend=True
+                    if (ultimo_valor[0]>ultimo_valor[1]):
+                            canSend=False
                             flag=1
                 elif (flag==1):
-                        if (ultimo_valor>48):
-                                canSend=True
+                        if (ultimo_valor[0]>ultimo_valor[2]):
+                                canSend=False
                                 flag=2
-                        elif (ultimo_valor<23):
+                        elif (ultimo_valor[0]<ultimo_valor[1]):
                                 flag=0
                 elif (flag==2):
-                        if(ultimo_valor>73):
+                        if(ultimo_valor[0]>ultimo_valor[3]):
                                 canSend=True
                                 flag=3
-                        elif(ultimo_valor<48):
+                        elif(ultimo_valor[0]<ultimo_valor[2]):
                                 flag=1
                 elif (flag==3):
-                        if(ultimo_valor<73):
+                        if(ultimo_valor[0]<ultimo_valor[3]):
                                 flag=2
                 
                 if(canSend):
                         print("Va a sobrepasar el umbral")
                         canSend=False
-                        sendMailTo("crisvaldru07@outlook.com","Uso del CPU va a sobrepasar el umbral")
+                        SendMail('./png/examen2.png')
+                        #sendMailTo("crisvaldru07@outlook.com","Uso del CPU va a sobrepasar el umbral")
             time.sleep(1)
             con+=1
             if(con == 599):
