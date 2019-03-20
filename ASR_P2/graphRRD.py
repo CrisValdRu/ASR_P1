@@ -16,10 +16,11 @@ def graficarRRD(nombre):
 def graficarMinimosCuadrados (nombre):
         ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
         tiempo_final = ultima_lectura
-        tiempo_inicial = tiempo_final-600
+        #tiempo_inicial = tiempo_final-600
+        tiempo_inicial = 1539659123
         ret = rrdtool.graphv( "png/"+nombre+"MinCua.png",
                 "--start",str(tiempo_inicial),
-                "--end",str(tiempo_final+3000),
+                "--end",str(tiempo_final+17000),
                 "--title=Uso de CPU",
                 "--color", 
                 "ARROW#009900",
@@ -28,30 +29,35 @@ def graficarMinimosCuadrados (nombre):
                 '--lower-limit', '0',
                 '--upper-limit', '100',
 
-                "DEF:outTrafic=rrd/"+nombre+".rrd:outoctets:AVERAGE",
+                "DEF:outTrafic=rrd/"+nombre+".rrd:cpuload:AVERAGE",
 
                 "VDEF:m=outTrafic,LSLSLOPE",
                 "VDEF:b=outTrafic,LSLINT",
+                "VDEF:CPUmax=outTrafic,MAXIMUM",
                 "CDEF:tendencia=outTrafic,POP,m,COUNT,*,b,+",
                 "CDEF:limites=tendencia,90,100,LIMIT",
                 "VDEF:limite1=limites,FIRST",
                 "VDEF:limite2=limites,LAST",
 
-                "VDEF:CPUmax=outTrafic,MAXIMUM",
+                
 
                 "VDEF:CPUlast=outTrafic,LAST",
                 "PRINT:CPUlast:%6.2lf %S",
 
+                #"AREA:outTrafic#005500:Carga de cpu",
+                "HRULE:90#00FF00",
+                "AREA:tendencia#FFBB0077:limite1",
+                #"AREA:limite1#00000077:limite1",
+                #"AREA:tendencia#FFBB0077",
+                #"LINE2:tendencia#FFBB00",
+                "LINE1:tendencia#FFBB00:dashes=3:Linea base",
+                #"AREA:limite1#FFFFFF",
                 "AREA:outTrafic#005500:Carga de cpu",
-                "HRULE:CPUmax#00FF00",
-                "AREA:tendencia#FFBB0077",
-                "LINE2:tendencia#FFBB00",
-                "LINE1:tendencia#FFBB00:dashes=10",
-                "AREA:limite1#FFFFFF",
-                "AREA:outTrafic#005500:Carga de cpu",
-                "AREA:tendencia#FFBB0077",
-                "GPRINT:limite1:  Reach  0% @ %c :strftime",
-                "GPRINT:limite2:  \nReach -100% @ %c \\n:strftime"
+                
+                "GPRINT:limite1:  limite1 %c :strftime",
+                "GPRINT:limite1:  limite1 %6.2lf %S",
+                "GPRINT:limite2:  \nlimite2 %c \\n:strftime",
+                "GPRINT:limite2:  limite2 %6.2lf %S"
                 
                 )
         #print(ret['print[0]'])

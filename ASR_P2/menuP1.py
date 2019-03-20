@@ -43,9 +43,12 @@ while repetir:
         #print('Ingresa un host: ')
         #host=input()
 
-        archivo="examen2"
-        comunidad="variation/linux-full-walk"
-        host="10.100.71.200"
+        archivo="source3"
+        comunidad="grupo_4cm1"
+        host="localhost"
+        #archivo="examen2"
+        #comunidad="variation/linux-full-walk"
+        #host="10.100.71.200"
 
         con=0
         flag=0
@@ -54,13 +57,13 @@ while repetir:
         
     elif (opcion==5):
         print('\nIngresa el nombre del archivo rrd: ')
-        archivo=input()
+        #archivo=input()
         #print('Ingresa una comunidad: ')
         #comunidad=input()
         #print('Ingresa un host: ')
         #host=input()
 
-        archivo="examen2"
+        archivo="examen2test"
         comunidad="grupo_4cm1"
         host="localhost"
         createRRDTOOL(archivo+".rrd",'N','10')

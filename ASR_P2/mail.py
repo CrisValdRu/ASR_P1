@@ -10,7 +10,7 @@ def SendMail(ImgFileName):
     msg = MIMEMultipart()
     msg['Subject'] = 'Evidencia 3'
     msg['From'] = 'cefriasm@gmail.com'
-    msg['To'] = 'tanibet.escom@gmail.com'
+    msg['To'] = 'crisvaldru07@outlook.com'
     text = MIMEText("Grupo 4CM1 - Equipo 4")
     msg.attach(text)
     image = MIMEImage(img_data, name=os.path.basename(ImgFileName))
