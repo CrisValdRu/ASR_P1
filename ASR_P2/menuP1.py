@@ -3,6 +3,7 @@ from graphRRD import graficar, graficarRRD, graficarObjectsRRD, graficarMinimosC
 from updateRRD import updateRRD, actualizarRRD, actualizarObjectsRRD
 import time
 import sys
+import rrdtool
 from mail import SendMail
 
 repetir = True
@@ -42,6 +43,7 @@ while repetir:
         #comunidad=input()
         #print('Ingresa un host: ')
         #host=input()
+        
 
         archivo="source3"
         comunidad="grupo_4cm1"
@@ -49,7 +51,7 @@ while repetir:
         #archivo="examen2"
         #comunidad="variation/linux-full-walk"
         #host="10.100.71.200"
-
+        rrdtool.dump("rrd/"+archivo+".rrd","xml/"+archivo+".xml")
         con=0
         flag=0
         canSend=False

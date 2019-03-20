@@ -17,10 +17,10 @@ def graficarMinimosCuadrados (nombre):
         ultima_lectura = int(rrdtool.last("rrd/"+nombre+".rrd"))
         tiempo_final = ultima_lectura
         #tiempo_inicial = tiempo_final-600
-        tiempo_inicial = 1539659123
+        tiempo_inicial = 1539658453
         ret = rrdtool.graphv( "png/"+nombre+"MinCua.png",
                 "--start",str(tiempo_inicial),
-                "--end",str(tiempo_final+17000),
+                "--end",str(tiempo_final+4000),
                 "--title=Uso de CPU",
                 "--color", 
                 "ARROW#009900",
@@ -29,7 +29,7 @@ def graficarMinimosCuadrados (nombre):
                 '--lower-limit', '0',
                 '--upper-limit', '100',
 
-                "DEF:outTrafic=rrd/"+nombre+".rrd:cpuload:AVERAGE",
+                "DEF:outTrafic=rrd/"+nombre+".rrd:CPUload:AVERAGE",
 
                 "VDEF:m=outTrafic,LSLSLOPE",
                 "VDEF:b=outTrafic,LSLINT",
@@ -46,18 +46,19 @@ def graficarMinimosCuadrados (nombre):
 
                 #"AREA:outTrafic#005500:Carga de cpu",
                 "HRULE:90#00FF00",
-                "AREA:tendencia#FFBB0077:limite1",
+                "AREA:limites#FFBB0077",
                 #"AREA:limite1#00000077:limite1",
                 #"AREA:tendencia#FFBB0077",
                 #"LINE2:tendencia#FFBB00",
-                "LINE1:tendencia#FFBB00:dashes=3:Linea base",
-                #"AREA:limite1#FFFFFF",
                 "AREA:outTrafic#005500:Carga de cpu",
+                "LINE1:tendencia#FFBB00:dashes=3:Tendencia",
+                #"AREA:limite1#FFFFFF",
                 
-                "GPRINT:limite1:  limite1 %c :strftime",
-                "GPRINT:limite1:  limite1 %6.2lf %S",
-                "GPRINT:limite2:  \nlimite2 %c \\n:strftime",
-                "GPRINT:limite2:  limite2 %6.2lf %S"
+                
+                "GPRINT:limite1:  limite 1 %c :strftime",
+                "GPRINT:limite1:  limite 1 %6.2lf %S",
+                #"GPRINT:limite2:  \nlimite2 %c \\n:strftime",
+                #"GPRINT:limite2:  limite2 %6.2lf %S"
                 
                 )
         #print(ret['print[0]'])
