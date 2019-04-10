@@ -6,11 +6,14 @@ def graficarNoLineal1(archivo):
         title="Deteccion de comportamiento anomalo"
         fname="rrd/"+archivo+".rrd"
         endDate = rrdtool.last(fname) #ultimo valor del XML
-        begDate = endDate - 30000
+        begDate = endDate - 40000
         DatosAyer=begDate - 86400
         FinAyer=endDate - 86400
-        #rrdtool.tune(rrdname, '--alpha', '0.1')
-        ret = rrdtool.graph("png/pred.png",
+        scale = 8
+        rrdtool.tune(fname, '--alpha', '0.9')
+        rrdtool.tune(fname, '--beta', '0.0035')
+        rrdtool.tune(fname, '--gamma', '0.1')
+        ret = rrdtool.graph("png/predAC.png",
                                 '--start', str(begDate), '--end', str(endDate), '--title=' + title,
                                 "--vertical-label=Bytes/s",
                                 '--slope-mode',
@@ -23,13 +26,13 @@ def graficarNoLineal1(archivo):
                         #"RRA:DEVSEASONAL:1d:0.1:2",
                         #"RRA:DEVPREDICT:5d:5",
                         #"RRA:FAILURES:1d:7:9:5""
-                                "CDEF:scaledobs=obs,8,*",
-                                "CDEF:scaledobsAyer=obsAyer,8,*",
+                                "CDEF:scaledobs=obs,"+str(scale)+",*",
+                                "CDEF:scaledobsAyer=obsAyer,"+str(scale)+",*",
                                 "CDEF:upper=pred,dev,2,*,+",
                                 "CDEF:lower=pred,dev,2,*,-",
-                                "CDEF:scaledupper=upper,8,*",
-                                "CDEF:scaledlower=lower,8,*",
-                                "CDEF:scaledpred=pred,8,*",
+                                "CDEF:scaledupper=upper,"+str(scale)+",*",
+                                "CDEF:scaledlower=lower,"+str(scale)+",*",
+                                "CDEF:scaledpred=pred,"+str(scale)+",*",
                         "TICK:fail#FDD017:1.0: Fallas",
                         "AREA:scaledobsAyer#9C9C9C:Ayer",
                         "LINE3:scaledobs#00FF00:In traffic",

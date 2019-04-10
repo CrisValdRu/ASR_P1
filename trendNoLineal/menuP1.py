@@ -32,8 +32,9 @@ while repetir:
         #oid=input()
         actualizarNoLineal(archivo, comunidad, host)
     elif (opcion==3):
-        print('\nIngresa el nombre del archivo rrd: ')
-        archivo=input()
+        #print('\nIngresa el nombre del archivo rrd: ')
+        #archivo=input()
+        archivo="predict"
         graficarNoLineal1(archivo)
     elif (opcion==4):
         #print('\nIngresa el nombre del archivo rrd: ')
@@ -64,10 +65,10 @@ while repetir:
         #print('Ingresa un host: ')
         #host=input()
 
-        archivo="examen2test"
-        comunidad="grupo_4cm1"
-        host="localhost"
-        createRRDTOOL(archivo+".rrd",'N','10')
+        archivo="predict"
+        comunidad="variation/virtuable"
+        host="10.100.71.200"
+        #createRRDTOOL(archivo+".rrd",'N','10')
         #objectsCreateRRDTOOL(archivo+".rrd",'N','10')
 
         print('Ingresa un Object ID: (1.3.6.1.2.1.2.2.1.10.3)')
@@ -77,9 +78,11 @@ while repetir:
         canSend=False
 
         while (con < 600):
-            actualizarObjectsRRD(archivo,comunidad,host,oid)
+            actualizarNoLineal(archivo,comunidad,host)
+            #actualizarObjectsRRD(archivo,comunidad,host,oid)
             if(con%2==0):
-                ultimo_valor = graficarObjectsRRD(archivo)
+                graficarNoLineal1(archivo)
+                """ultimo_valor = graficarObjectsRRD(archivo)
                 if (flag==0):
                     if (ultimo_valor[0]>ultimo_valor[1]):
                             canSend=False
@@ -104,7 +107,7 @@ while repetir:
                         print("Va a sobrepasar el umbral")
                         canSend=False
                         SendMail('./png/examen2.png')
-                        #sendMailTo("crisvaldru07@outlook.com","Uso del CPU va a sobrepasar el umbral")
+                        #sendMailTo("crisvaldru07@outlook.com","Uso del CPU va a sobrepasar el umbral")"""
             time.sleep(1)
             con+=1
             if(con == 599):
@@ -118,9 +121,10 @@ while repetir:
         createRRDTOOL("examen.rrd",'1551252880','10')
         createUpdate('grupo_4cm1', 'localhost', '1.3.6.1.2.1.2.2.1.3.1', '161')
 
-    print("Desea hacer otra operacion? Y/N: ")
-    res=input()
-    if(res=='Y' or res=='y' or res=="Yes"):
-        repetir=True
-    else:
-        repetir=False
+    repetir=False
+    #print("Desea hacer otra operacion? Y/N: ")
+    #res=input()
+    #if(res=='Y' or res=='y' or res=="Yes"):
+    #    repetir=True
+    #else:
+    #    repetir=False
